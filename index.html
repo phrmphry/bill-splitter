@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>โปรแกรมหารบิล (วาระแห่งชาติ)</title>
     <style>
         :root {
@@ -27,7 +27,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: 20px 10px;
+            padding: 15px 8px;
             line-height: 1.5;
         }
 
@@ -35,22 +35,22 @@
             max-width: 750px;
             margin: 0 auto;
             background: var(--card-bg);
-            padding: 25px;
+            padding: 20px 15px;
             border-radius: 16px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
         }
 
         h1 {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: #0f172a;
         }
 
         .section {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 25px;
+            padding-bottom: 20px;
         }
 
         .section:last-of-type {
@@ -59,9 +59,9 @@
         }
 
         .section-title {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             color: #334155;
             display: flex;
             justify-content: space-between;
@@ -86,8 +86,8 @@
         .btn-primary:hover { background-color: var(--primary-hover); }
         .btn-danger { background-color: #fee2e2; color: var(--danger-color); }
         .btn-danger:hover { background-color: var(--danger-color); color: white; }
-        .btn-small { padding: 4px 8px; font-size: 0.8rem; border-radius: 6px; }
-        .btn-secondary { background-color: #e2e8f0; color: #475569; font-size: 0.75rem; padding: 3px 8px; border-radius: 4px; }
+        .btn-small { padding: 5px 10px; font-size: 0.8rem; border-radius: 6px; }
+        .btn-secondary { background-color: #e2e8f0; color: #475569; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; }
         .btn-secondary:hover { background-color: #cbd5e1; }
 
         .row-item {
@@ -98,12 +98,13 @@
         }
 
         input[type="text"], input[type="number"] {
-            padding: 8px 12px;
+            padding: 10px 12px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             font-size: 0.95rem;
             outline: none;
             color: var(--text-main);
+            width: 100%;
         }
 
         input[type="text"]:focus, input[type="number"]:focus {
@@ -114,28 +115,45 @@
             background: #f8fafc;
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 15px;
+            padding: 12px;
             margin-bottom: 15px;
         }
 
-        .item-headers {
+        /* โครงสร้างหลักของกรอกข้อมูลอาหาร */
+        .item-inputs-layout {
             display: flex;
-            gap: 10px;
-            margin-bottom: 6px;
-            padding-right: 32px;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
-        .header-label {
-            font-size: 0.85rem;
+        .inputs-row-top {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .inputs-row-bottom {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .field-group.flex-2 {
+            flex: 2;
+        }
+
+        .field-label-mini {
+            font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-muted);
-        }
-        
-        .item-main-inputs {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 12px;
         }
 
         .sharers-zone {
@@ -146,32 +164,40 @@
         }
 
         .sharers-header {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             color: var(--text-muted);
             margin-bottom: 8px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        @media (min-width: 480px) {
+            .sharers-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .sharers-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+            gap: 6px;
         }
 
         .sharer-input-group {
             display: flex;
             align-items: center;
             background: #f1f5f9;
-            padding: 4px 8px;
+            padding: 4px 6px;
             border-radius: 6px;
-            gap: 6px;
+            gap: 4px;
         }
 
         .sharer-name {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -179,28 +205,29 @@
         }
 
         .input-weight {
-            width: 55px;
-            padding: 4px 6px !important;
+            width: 50px !important;
+            padding: 4px !important;
             text-align: center;
-            font-size: 0.85rem !important;
+            font-size: 0.8rem !important;
             border-radius: 4px !important;
+            height: 28px;
         }
 
         .bill-modifiers {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* ปรับเป็น 3 คอลัมน์เพื่อรองรับ VAT */
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
             margin-bottom: 15px;
         }
 
         .modifier-field {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
 
         .modifier-field label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 500;
             color: var(--text-muted);
         }
@@ -208,31 +235,30 @@
         .summary-card {
             background: #f1f5f9;
             border-radius: 12px;
-            padding: 16px;
+            padding: 14px;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
         }
 
         .summary-row.total-row {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             border-top: 1px solid #cbd5e1;
-            padding-top: 10px;
-            margin-top: 10px;
+            padding-top: 8px;
+            margin-top: 8px;
             color: #0f172a;
         }
 
-        /* ปรับปรุงสไตล์แสดงผลลัพธ์รายคนให้กางรายละเอียดอาหารได้ */
         .result-person-block {
             background: #ffffff;
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
         }
@@ -241,31 +267,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 16px;
+            padding: 12px 14px;
             background: #f0fdf4;
             border-left: 5px solid var(--success-color);
             font-weight: 600;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
         }
 
         .result-person-total {
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             color: #15803d;
             font-weight: 700;
         }
 
         .result-person-details {
-            padding: 12px 16px;
+            padding: 10px 14px;
             background: #fafafa;
         }
 
         .detail-item-row {
             display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            color: #475569;
+            flex-direction: column;
             padding: 6px 0;
             border-bottom: 1px dashed #e2e8f0;
+            gap: 2px;
+        }
+
+        @media (min-width: 400px) {
+            .detail-item-row {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
         }
 
         .detail-item-row:last-child {
@@ -274,25 +307,30 @@
         }
 
         .detail-item-name {
-            flex: 1;
-            padding-right: 10px;
+            font-size: 0.85rem;
+            color: #475569;
         }
 
         .detail-item-share {
             color: var(--text-muted);
-            font-size: 0.8rem;
-            margin-right: 15px;
+            font-size: 0.75rem;
+        }
+
+        .detail-item-price {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1e293b;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>💸 โปรแกรมหารบิล (นี่คือวาระแห่งชาติ!)</h1>
+    <h1>💸 นี่คือวาระแห่งชาติ!</h1>
 
     <div class="section">
         <div class="section-title">
-            <span>สมาชิกตี้ในรอบนี้</span>
+            <span>สมาชิกตี้ ได้แก่</span>
             <button class="btn btn-primary btn-small" onclick="addPerson()">+ เพิ่มคน</button>
         </div>
         <div id="people-container">
@@ -312,11 +350,11 @@
         <div class="section-title">ส่วนลดและค่าบริการเพิ่มเติมท้ายบิล</div>
         <div class="bill-modifiers">
             <div class="modifier-field">
-                <label for="bill-discount">ส่วนลดรวม (บาท)</label>
+                <label for="bill-discount">ส่วนลด (บาท)</label>
                 <input type="number" id="bill-discount" value="0" min="0" oninput="calculateBill()">
             </div>
             <div class="modifier-field">
-                <label for="bill-service-charge">Service Charge (%)</label>
+                <label for="bill-service-charge">Svc (%)</label>
                 <input type="number" id="bill-service-charge" value="0" min="0" oninput="calculateBill()">
             </div>
             <div class="modifier-field">
@@ -350,14 +388,13 @@
     </div>
 
     <div class="section">
-        <div class="section-title">สรุปยอดสุทธิและรายการอาหารของแต่ละคน</div>
+        <div class="section-title">สรุปยอดสุทธิและรายการของแต่ละคน</div>
         <div id="results-container">
             </div>
     </div>
 </div>
 
 <script>
-    // State เริ่มต้น
     let people = [
         { id: 'p1', name: 'นาย A' },
         { id: 'p2', name: 'นาย B' },
@@ -406,24 +443,29 @@
             const block = document.createElement('div');
             block.className = 'item-block';
 
-            const headersRow = document.createElement('div');
-            headersRow.className = 'item-headers';
-            headersRow.innerHTML = `
-                <div class="header-label" style="flex:2;">- รายการ</div>
-                <div class="header-label" style="width:70px; text-align:center;">- จำนวน</div>
-                <div class="header-label" style="width:110px; text-align:right;">- ราคา:หน่วย (บาท)</div>
+            // ปรับ Layout การกรอกข้อมูลใหม่แบบแถวซ้อนบนล่าง เพื่อให้จอมือถือไม่ล้น
+            const mainInputsLayout = document.createElement('div');
+            mainInputsLayout.className = 'item-inputs-layout';
+            mainInputsLayout.innerHTML = `
+                <div class="inputs-row-top">
+                    <div class="field-group">
+                        <span class="field-label-mini">รายการอาหาร</span>
+                        <input type="text" value="${item.name}" oninput="updateItemName('${item.id}', this.value)" placeholder="ชื่ออาหาร">
+                    </div>
+                    <button class="btn btn-danger btn-small" style="margin-top: 20px; height: 38px;" onclick="removeItem('${item.id}')">✕</button>
+                </div>
+                <div class="inputs-row-bottom">
+                    <div class="field-group">
+                        <span class="field-label-mini">จำนวน</span>
+                        <input type="number" style="text-align:center;" value="${item.qty}" min="1" oninput="updateItemQty('${item.id}', this.value)">
+                    </div>
+                    <div class="field-group flex-2">
+                        <span class="field-label-mini">ราคา:หน่วย(บาท)</span>
+                        <input type="number" style="text-align:right;" value="${item.price}" min="0" oninput="updateItemPrice('${item.id}', this.value)">
+                    </div>
+                </div>
             `;
-            block.appendChild(headersRow);
-
-            const mainInputs = document.createElement('div');
-            mainInputs.className = 'item-main-inputs';
-            mainInputs.innerHTML = `
-                <input type="text" style="flex:2;" value="${item.name}" oninput="updateItemName('${item.id}', this.value)" placeholder="ชื่ออาหาร">
-                <input type="number" style="width:70px; text-align:center;" value="${item.qty}" min="1" oninput="updateItemQty('${item.id}', this.value)" placeholder="จำนวน">
-                <input type="number" style="width:110px; text-align:right;" value="${item.price}" min="0" oninput="updateItemPrice('${item.id}', this.value)" placeholder="ราคา">
-                <button class="btn btn-danger btn-small" onclick="removeItem('${item.id}')">✕</button>
-            `;
-            block.appendChild(mainInputs);
+            block.appendChild(mainInputsLayout);
 
             const sharersZone = document.createElement('div');
             sharersZone.className = 'sharers-zone';
@@ -431,10 +473,10 @@
             const header = document.createElement('div');
             header.className = 'sharers-header';
             header.innerHTML = `
-                <span>⚙️ สัดส่วน (ใส่ 1 = คิดเต็ม, ใส่ 0.5 = มาหลัง/กินน้อย, ใส่ 0 = ไม่กินไม่หาร)</span>
+                <span>⚙️ ใส่ 1 = คิดเต็ม , ใส่ 0.5 = มาหลัง/กินน้อย , ใส่ 0 = ไม่กินไม่หาร</span>
                 <div style="display:flex; gap:5px;">
                     <button class="btn-secondary" onclick="presetItemWeights('${item.id}', 1); event.preventDefault();">ทุกคน (=1)</button>
-                    <button class="btn-secondary" onclick="presetItemWeights('${item.id}', 0); event.preventDefault();">เคลียร์ทั้งหมด (=0)</button>
+                    <button class="btn-secondary" onclick="presetItemWeights('${item.id}', 0); event.preventDefault();">เคลียร์ (=0)</button>
                 </div>
             `;
             sharersZone.appendChild(header);
@@ -478,6 +520,7 @@
         calculateBill();
     }
 
+    // ฟังก์ชันอื่นๆ คงความแม่นยำทางระบบคำนวณและแก้อาการปุ่มเอ๋อตามเดิม
     function removePerson(id) {
         if (people.length <= 1) {
             alert('ต้องมีสมาชิกอย่างน้อย 1 คนครับ');
@@ -566,11 +609,8 @@
         }
     }
 
-    // ฟังก์ชันคำนวณคณิตศาสตร์บิลหลัก
     function calculateBill() {
         let subtotal = 0;
-        
-        // โครงสร้างสำหรับเก็บประวัติว่าแต่ละคนกินรายการไหนไปเท่าไหร่ (ยอดดิบ)
         let personItemBreakdown = {};
         people.forEach(p => {
             personItemBreakdown[p.id] = [];
@@ -580,14 +620,12 @@
             const itemCost = item.qty * item.price;
             subtotal += itemCost;
 
-            // หาผลรวมของสัดส่วนตัวหารในจานนี้
             let totalWeightInItem = 0;
             people.forEach(p => {
                 const w = item.weights[p.id] || 0;
                 totalWeightInItem += w;
             });
 
-            // บันทึกยอดแชร์รายรายการของแต่ละคน
             people.forEach(p => {
                 const w = item.weights[p.id] || 0;
                 let rawShare = 0;
@@ -604,12 +642,10 @@
             });
         });
 
-        // ดึงค่าตัวแปรจากท้ายบิลมาคำนวณ
         const totalDiscount = parseFloat(document.getElementById('bill-discount').value) || 0;
         const svcChargeRate = parseFloat(document.getElementById('bill-service-charge').value) || 0;
         const vatRate = parseFloat(document.getElementById('bill-vat').value) || 0;
 
-        // คำนวณตามลำดับบิลจริง: ค่าอาหารดิบ -> หักส่วนลด -> บวก Service Charge -> บวก VAT
         let postDiscountTotal = subtotal - totalDiscount;
         if (postDiscountTotal < 0) postDiscountTotal = 0;
 
@@ -619,18 +655,14 @@
         let totalVat = postSvcTotal * (vatRate / 100);
         let grandTotal = postSvcTotal + totalVat;
 
-        // หาตัวคูณแปรผัน (Multiplier Ratio) เพื่อกระจาย ส่วนลด, Service Charge, VAT เฉลี่ยลงไปในทุกๆ บาทที่กินจริง
-        // สูตรคือ: ยอดสุทธิท้ายบิลทั้งหมด / ยอดค่าอาหารดิบรวมทั้งหมด
         let billMultiplier = subtotal > 0 ? (grandTotal / subtotal) : 0;
 
-        // อัปเดตข้อมูลสรุปท้ายบิลหลักบนหน้าเว็บ
         document.getElementById('sum-subtotal').innerText = subtotal.toFixed(2);
         document.getElementById('sum-discount').innerText = Math.min(totalDiscount, subtotal).toFixed(2);
         document.getElementById('sum-service').innerText = totalSvcCharge.toFixed(2);
         document.getElementById('sum-vat').innerText = totalVat.toFixed(2);
         document.getElementById('sum-grand-total').innerText = grandTotal.toFixed(2);
 
-        // แสดงผลลัพธ์ส่วนขยายแยกบุคคล
         const resultsContainer = document.getElementById('results-container');
         resultsContainer.innerHTML = '';
 
@@ -638,15 +670,12 @@
             let finalIndividualPay = 0;
             let detailsHtml = '';
 
-            // ดึงรายการอาหารที่คนนี้เกี่ยวข้องมาแตกรายละเอียด
             const myItems = personItemBreakdown[person.id] || [];
             
             myItems.forEach(itemDetail => {
-                // ยอดสุทธิของอาหารจานนี้หลังคำนวณบวก/ลด ท้ายบิลแล้ว = ยอดแชร์ดิบ * ตัวคูณแปรผันบิล
                 let finalItemCost = itemDetail.rawShare * billMultiplier;
                 finalIndividualPay += finalItemCost;
 
-                // แสดงผลเฉพาะรายการอาหารที่คนนี้มีส่วนร่วมแชร์กินจริง (สัดส่วน > 0)
                 if (itemDetail.weightUsed > 0) {
                     detailsHtml += `
                         <div class="detail-item-row">
@@ -658,12 +687,10 @@
                 }
             });
 
-            // หากไม่มีรายการอาหารที่กินเลยให้ขึ้นข้อความระบุ
             if (detailsHtml === '') {
-                detailsHtml = `<div class="detail-item-row" style="color:var(--text-muted);">ไม่มีรายการอาหารที่ร่วมหาร</div>`;
+                detailsHtml = `<div class="detail-item-row" style="color:var(--text-muted); font-size:0.8rem;">ไม่มีรายการอาหารที่ร่วมหาร</div>`;
             }
 
-            // สร้างการ์ดแสดงผลบุคคลแบบเปิดกางรายละเอียด
             const personBlock = document.createElement('div');
             personBlock.className = 'result-person-block';
             personBlock.innerHTML = `
