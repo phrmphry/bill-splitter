@@ -15,6 +15,8 @@
             --border-color: #e2e8f0;
             --danger-color: #ef4444;
             --success-color: #10b981;
+            --share-color: #059669;
+            --share-hover: #047857;
         }
 
         * {
@@ -43,8 +45,13 @@
         h1 {
             font-size: 1.4rem;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
             color: #0f172a;
+        }
+
+        .share-bar {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .section {
@@ -89,6 +96,18 @@
         .btn-small { padding: 5px 10px; font-size: 0.8rem; border-radius: 6px; }
         .btn-secondary { background-color: #e2e8f0; color: #475569; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; }
         .btn-secondary:hover { background-color: #cbd5e1; }
+        
+        .btn-share {
+            background-color: var(--share-color);
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+        }
+        .btn-share:hover { background-color: var(--share-hover); }
 
         .row-item {
             display: flex;
@@ -119,7 +138,6 @@
             margin-bottom: 15px;
         }
 
-        /* โครงสร้างหลักของกรอกข้อมูลอาหาร */
         .item-inputs-layout {
             display: flex;
             flex-direction: column;
@@ -327,6 +345,9 @@
 
 <div class="container">
     <h1>💸 นี่คือวาระแห่งชาติ!</h1>
+    <div class="share-bar">
+        <span style="font-size: 0.75rem; color: var(--text-muted);">กรอกเสร็จแล้วกดปุ่มแชร์ส่งเข้ากลุ่ม LINE ได้เลย</span>
+    </div>
 
     <div class="section">
         <div class="section-title">
@@ -334,16 +355,18 @@
             <button class="btn btn-primary btn-small" onclick="addPerson()">+ เพิ่มคน</button>
         </div>
         <div id="people-container">
-            </div>
+        </div>
     </div>
 
     <div class="section">
         <div class="section-title">
-            <span>รายการอาหาร และสัดส่วนคนกิน</span>
-            <button class="btn btn-primary btn-small" onclick="addItem()">+ เพิ่มรายการอาหาร</button>
+            <span>รายการและสัดส่วนคนกิน</span>
         </div>
         <div id="items-container">
-            </div>
+        </div>
+        <div style="margin-top: 10px; text-align: center;">
+            <button class="btn btn-primary btn-small" style="width: 100%; padding: 10px;" onclick="addItem()">+ เพิ่มรายการอาหาร</button>
+        </div>
     </div>
 
     <div class="section">
@@ -351,15 +374,15 @@
         <div class="bill-modifiers">
             <div class="modifier-field">
                 <label for="bill-discount">ส่วนลด (บาท)</label>
-                <input type="number" id="bill-discount" value="0" min="0" oninput="calculateBill()">
+                <input type="number" id="bill-discount" value="0" min="0" onchange="updateModifierDiscount(this.value)">
             </div>
             <div class="modifier-field">
                 <label for="bill-service-charge">Svc (%)</label>
-                <input type="number" id="bill-service-charge" value="0" min="0" oninput="calculateBill()">
+                <input type="number" id="bill-service-charge" value="0" min="0" onchange="updateModifierSvc(this.value)">
             </div>
             <div class="modifier-field">
                 <label for="bill-vat">VAT (%)</label>
-                <input type="number" id="bill-vat" value="7" min="0" oninput="calculateBill()">
+                <input type="number" id="bill-vat" value="7" min="0" onchange="updateModifierVat(this.value)">
             </div>
         </div>
 
@@ -389,35 +412,36 @@
 
     <div class="section">
         <div class="section-title">สรุปยอดสุทธิและรายการของแต่ละคน</div>
-        <div id="results-container">
-            </div>
+        <div id="people-results-box"></div>
+        <div style="margin-top: 20px;">
+            <button class="btn btn-share" onclick="copyShareLink()">🔗 คัดลอกลิงก์ส่งบิลนี้ให้เพื่อน</button>
+        </div>
     </div>
 </div>
 
 <script>
-    let people = [
-        { id: 'p1', name: 'นาย A' },
-        { id: 'p2', name: 'นาย B' },
-        { id: 'p3', name: 'นาย C' }
-    ];
-
-    let items = [
-        { 
-            id: 'i1', 
-            name: 'รายการจานกลาง (กินเท่ากัน)', 
-            qty: 1, 
-            price: 300, 
-            weights: { 'p1': 1, 'p2': 1, 'p3': 1 } 
-        }
-    ];
-
-    let personCounter = 3;
-    let itemCounter = 1;
+    let people = [];
+    let items = [];
+    let personCounter = 0;
+    let itemCounter = 0;
 
     window.onload = function() {
+        if (!loadStateFromURL()) {
+            people = [
+                { id: 'p1', name: 'นาย A' },
+                { id: 'p2', name: 'นาย B' },
+                { id: 'p3', name: 'นาย C' }
+            ];
+            items = [
+                { id: 'i1', name: 'รายการจานกลาง (กินเท่ากัน)', qty: 1, price: 300, weights: { 'p1': 1, 'p2': 1, 'p3': 1 } }
+            ];
+            personCounter = 3;
+            itemCounter = 1;
+        }
+        
         renderPeople();
         renderItems();
-        calculateBill();
+        calculateBill(false);
     };
 
     function renderPeople() {
@@ -443,25 +467,27 @@
             const block = document.createElement('div');
             block.className = 'item-block';
 
-            // ปรับ Layout การกรอกข้อมูลใหม่แบบแถวซ้อนบนล่าง เพื่อให้จอมือถือไม่ล้น
             const mainInputsLayout = document.createElement('div');
             mainInputsLayout.className = 'item-inputs-layout';
             mainInputsLayout.innerHTML = `
                 <div class="inputs-row-top">
                     <div class="field-group">
                         <span class="field-label-mini">รายการอาหาร</span>
-                        <input type="text" value="${item.name}" oninput="updateItemName('${item.id}', this.value)" placeholder="ชื่ออาหาร">
+                        <input type="text" id="name-input-${item.id}" value="${item.name}" oninput="updateItemName('${item.id}', this.value)" placeholder="ชื่ออาหาร">
                     </div>
                     <button class="btn btn-danger btn-small" style="margin-top: 20px; height: 38px;" onclick="removeItem('${item.id}')">✕</button>
                 </div>
                 <div class="inputs-row-bottom">
                     <div class="field-group">
-                        <span class="field-label-mini">จำนวน</span>
-                        <input type="number" style="text-align:center;" value="${item.qty}" min="1" oninput="updateItemQty('${item.id}', this.value)">
+                        <span class="field-label-mini">จำนวน (เลขเต็มเท่านั้น)</span>
+                        <input type="number" id="qty-input-${item.id}" style="text-align:center;" value="${item.qty}" min="1" step="1" 
+                            onkeydown="if(event.key==='.'){event.preventDefault();}" 
+                            onchange="updateItemQty('${item.id}', this.value)">
                     </div>
                     <div class="field-group flex-2">
-                        <span class="field-label-mini">ราคา:หน่วย(บาท)</span>
-                        <input type="number" style="text-align:right;" value="${item.price}" min="0" oninput="updateItemPrice('${item.id}', this.value)">
+                        <span class="field-label-mini">ราคาต่อหน่วย (บาท)</span>
+                        <input type="number" id="price-input-${item.id}" style="text-align:right;" value="${item.price}" min="0" step="any" 
+                            onchange="updateItemPrice('${item.id}', this.value)">
                     </div>
                 </div>
             `;
@@ -473,7 +499,7 @@
             const header = document.createElement('div');
             header.className = 'sharers-header';
             header.innerHTML = `
-                <span>⚙️ ใส่ 1 = คิดเต็ม , ใส่ 0.5 = มาหลัง/กินน้อย , ใส่ 0 = ไม่กินไม่หาร</span>
+                <span>⚙️ ใส่ 1 = กินเต็มที่หารเต็มสิทธิ , ใส่ 0 = ไม่ได้กินจ้า ไม่หารจ้า, ใส่ 0.25/0.5/0.75 = มาสาย/กินน้อย/ชิมๆจิบๆ แล้วแต่จะกรุณา</span>
                 <div style="display:flex; gap:5px;">
                     <button class="btn-secondary" onclick="presetItemWeights('${item.id}', 1); event.preventDefault();">ทุกคน (=1)</button>
                     <button class="btn-secondary" onclick="presetItemWeights('${item.id}', 0); event.preventDefault();">เคลียร์ (=0)</button>
@@ -494,8 +520,8 @@
                 group.className = 'sharer-input-group';
                 group.innerHTML = `
                     <span class="sharer-name" title="${person.name}">${person.name || 'ไม่มีชื่อ'}</span>
-                    <input type="number" class="input-weight" value="${currentWeight}" min="0" step="0.1" 
-                        oninput="updateItemWeight('${item.id}', '${person.id}', this.value)">
+                    <input type="number" class="input-weight" value="${currentWeight}" min="0" max="1" step="0.05" 
+                        onchange="updateItemWeight('${item.id}', '${person.id}', this.value)">
                 `;
                 grid.appendChild(group);
             });
@@ -506,10 +532,20 @@
         });
     }
 
+    function captureAllCurrentNames() {
+        items.forEach(item => {
+            const el = document.getElementById(`name-input-${item.id}`);
+            if (el) {
+                item.name = el.value;
+            }
+        });
+    }
+
     function addPerson() {
+        captureAllCurrentNames();
         personCounter++;
         const newId = 'p' + personCounter;
-        people.push({ id: newId, name: `นาย ${String.fromCharCode(64 + personCounter)}` });
+        people.push({ id: newId, name: `นาย ${String.fromCharCode(64 + (personCounter % 26 == 0 ? 26 : personCounter % 26))}` });
         
         items.forEach(item => {
             item.weights[newId] = 1;
@@ -520,8 +556,8 @@
         calculateBill();
     }
 
-    // ฟังก์ชันอื่นๆ คงความแม่นยำทางระบบคำนวณและแก้อาการปุ่มเอ๋อตามเดิม
     function removePerson(id) {
+        captureAllCurrentNames();
         if (people.length <= 1) {
             alert('ต้องมีสมาชิกอย่างน้อย 1 คนครับ');
             return;
@@ -540,17 +576,16 @@
         if (person) {
             person.name = val;
             renderItems();
+            saveStateToURL();
         }
     }
 
     function addItem() {
+        captureAllCurrentNames();
         itemCounter++;
         const newId = 'i' + itemCounter;
-        
         let initWeights = {};
-        people.forEach(p => {
-            initWeights[p.id] = 1;
-        });
+        people.forEach(p => { initWeights[p.id] = 1; });
 
         items.push({ id: newId, name: `รายการอาหารที่ ${itemCounter}`, qty: 1, price: 0, weights: initWeights });
         renderItems();
@@ -558,6 +593,7 @@
     }
 
     function removeItem(id) {
+        captureAllCurrentNames();
         if (items.length <= 1) {
             alert('ต้องมีอย่างน้อย 1 รายการครับ');
             return;
@@ -567,15 +603,19 @@
         calculateBill();
     }
 
-    function updateItemName(id, val) {
-        const item = items.find(i => i.id === id);
-        if (item) item.name = val;
-    }
-
     function updateItemQty(id, val) {
         const item = items.find(i => i.id === id);
         if (item) {
-            item.qty = parseInt(val) || 1;
+            let qty = parseInt(val);
+            
+            if (isNaN(qty) || qty < 1) {
+                alert("⚠️ จำนวนรายการอาหารต้องไม่ต่ำกว่า 1 ครับ");
+                qty = 1;
+                const inputElement = document.getElementById(`qty-input-${id}`);
+                if (inputElement) inputElement.value = 1;
+            }
+            
+            item.qty = qty;
             calculateBill();
         }
     }
@@ -583,7 +623,18 @@
     function updateItemPrice(id, val) {
         const item = items.find(i => i.id === id);
         if (item) {
-            item.price = parseFloat(val) || 0;
+            let price = parseFloat(val);
+            const inputElement = document.getElementById(`price-input-${id}`);
+            
+            if (isNaN(price) || price < 0) {
+                alert("⚠️ ราคาต่อหน่วยต้องไม่ต่ำกว่า 0 บาทครับ");
+                price = 0;
+                if (inputElement) inputElement.value = 0;
+            } else if (price === 0) {
+                alert("💡 อย่าลืมใส่ราคาอาหารในช่องนี้ด้วยนะครับ");
+            }
+            
+            item.price = price;
             calculateBill();
         }
     }
@@ -592,29 +643,66 @@
         const item = items.find(i => i.id === itemId);
         if (item) {
             let w = parseFloat(val);
-            if (isNaN(w) || w < 0) w = 0;
+            
+            if (isNaN(w) || w < 0) {
+                alert("⚠️ สัดส่วนการหารต้องไม่ต่ำกว่า 0 ครับ");
+                w = 0;
+                renderItems(); 
+            }
+            
+            if (w > 1) {
+                alert("⚠️ สัดส่วนการหารสูงสุดต้องไม่เกิน 1 ครับ");
+                w = 1;
+                renderItems(); 
+            }
+            
             item.weights[personId] = w;
             calculateBill();
         }
     }
 
     function presetItemWeights(itemId, value) {
+        captureAllCurrentNames();
         const item = items.find(i => i.id === itemId);
         if (item) {
-            people.forEach(p => {
-                item.weights[p.id] = value;
-            });
+            people.forEach(p => { item.weights[p.id] = value; });
             renderItems();
             calculateBill();
         }
     }
 
-    function calculateBill() {
+    // 🛠️ 3 ฟังก์ชันใหม่ในการคุมวินัยตัวเลขติดลบส่วนปรับแต่งท้ายบิลรายกล่อง
+    function updateModifierDiscount(val) {
+        let discount = parseFloat(val);
+        if (isNaN(discount) || discount < 0) {
+            alert("⚠️ ส่วนลดรวมต้องไม่ต่ำกว่า 0 บาทครับ");
+            document.getElementById('bill-discount').value = 0;
+        }
+        calculateBill();
+    }
+
+    function updateModifierSvc(val) {
+        let svc = parseFloat(val);
+        if (isNaN(svc) || svc < 0) {
+            alert("⚠️ Service Charge ต้องไม่ต่ำกว่า 0% ครับ");
+            document.getElementById('bill-service-charge').value = 0;
+        }
+        calculateBill();
+    }
+
+    function updateModifierVat(val) {
+        let vat = parseFloat(val);
+        if (isNaN(vat) || vat < 0) {
+            alert("⚠️ VAT ต้องไม่ต่ำกว่า 0% ครับ");
+            document.getElementById('bill-vat').value = 0;
+        }
+        calculateBill();
+    }
+
+    function calculateBill(shouldUpdateURL = true) {
         let subtotal = 0;
         let personItemBreakdown = {};
-        people.forEach(p => {
-            personItemBreakdown[p.id] = [];
-        });
+        people.forEach(p => { personItemBreakdown[p.id] = []; });
 
         items.forEach(item => {
             const itemCost = item.qty * item.price;
@@ -663,8 +751,8 @@
         document.getElementById('sum-vat').innerText = totalVat.toFixed(2);
         document.getElementById('sum-grand-total').innerText = grandTotal.toFixed(2);
 
-        const resultsContainer = document.getElementById('results-container');
-        resultsContainer.innerHTML = '';
+        const peopleResultsBox = document.getElementById('people-results-box');
+        peopleResultsBox.innerHTML = '';
 
         people.forEach(person => {
             let finalIndividualPay = 0;
@@ -702,7 +790,87 @@
                     ${detailsHtml}
                 </div>
             `;
-            resultsContainer.appendChild(personBlock);
+            peopleResultsBox.appendChild(personBlock);
+        });
+
+        if (shouldUpdateURL) {
+            saveStateToURL();
+        }
+    }
+
+    function saveStateToURL() {
+        try {
+            const discount = document.getElementById('bill-discount').value;
+            const svc = document.getElementById('bill-service-charge').value;
+            const vat = document.getElementById('bill-vat').value;
+
+            const stateObj = {
+                p: people,
+                i: items,
+                pc: personCounter,
+                ic: itemCounter,
+                d: discount,
+                s: svc,
+                v: vat
+            };
+
+            const jsonStr = JSON.stringify(stateObj);
+            const base64Str = btoa(encodeURIComponent(jsonStr));
+            window.history.replaceState(null, '', '?b=' + base64Str);
+        } catch (e) {
+            console.error("ไม่สามารถบันทึกข้อมูลลง URL ได้:", e);
+        }
+    }
+
+    function loadStateFromURL() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const base64Data = urlParams.get('b');
+            if (!base64Data) return false;
+
+            const jsonStr = decodeURIComponent(atob(base64Data));
+            const stateObj = JSON.parse(jsonStr);
+
+            if (stateObj.p && stateObj.i) {
+                people = stateObj.p;
+                items = stateObj.i;
+                personCounter = stateObj.pc || people.length;
+                itemCounter = stateObj.ic || items.length;
+                
+                document.getElementById('bill-discount').value = stateObj.d || 0;
+                document.getElementById('bill-service-charge').value = stateObj.s || 0;
+                document.getElementById('bill-vat').value = stateObj.v !== undefined ? stateObj.v : 7;
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error("การแกะข้อมูลรหัสลิงก์ผิดพลาด:", e);
+            return false;
+        }
+    }
+
+    function copyShareLink() {
+        captureAllCurrentNames();
+        
+        let hasZeroPriceItem = false;
+        items.forEach(item => {
+            if (item.price === 0) {
+                hasZeroPriceItem = true;
+            }
+        });
+
+        if (hasZeroPriceItem) {
+            alert("⚠️ พบรายการอาหารที่ยังไม่ได้ใส่ราคา! กรุณาตรวจสอบและกรอกราคาให้เรียบร้อยก่อนแชร์บิลครับ");
+            return;
+        }
+
+        saveStateToURL();
+        const currentFullURL = window.location.href;
+        
+        navigator.clipboard.writeText(currentFullURL).then(() => {
+            alert('🔗 คัดลอกลิงก์บิลนี้เรียบร้อยแล้ว! นำไปวางส่งในแชทกลุ่มให้เพื่อนเปิดดูได้เลยครับ');
+        }).catch(err => {
+            alert('ไม่สามารถก๊อปปี้อัตโนมัติได้ สามารถก๊อปปี้ลิงก์บนแถบด้านบนของเบราว์เซอร์ส่งให้เพื่อนได้เช่นกันครับ');
         });
     }
 </script>
