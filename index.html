@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หารบิล 🍺</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F4F0;color:#1A1916;min-height:100vh;padding:16px}
+  h1{font-size:20px;font-weight:600;margin-bottom:16px;text-align:center}
+  .card{background:#fff;border:0.5px solid #D9D8D3;border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .sec-title{font-size:11px;font-weight:600;color:#888780;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+  .col-header{font-size:12px;color:#888780;padding-bottom:4px}
+  .item-row{display:grid;gap:6px;align-items:center;margin-bottom:6px}
+  .bill-row{grid-template-columns:minmax(0,2fr) 56px minmax(0,1fr) 32px}
+  .person-row-g{grid-template-columns:minmax(0,1.5fr) 64px 32px}
+  input{width:100%;border:1px solid #D9D8D3;border-radius:8px;padding:7px 9px;font-size:14px;background:#FAFAF8;color:#1A1916;outline:none}
+  input:focus{border-color:#1D9E75;background:#fff}
+  input[type=number]{text-align:right}
+  .del-btn{background:none;border:none;cursor:pointer;color:#B4B2A9;padding:4px;border-radius:6px;font-size:16px;display:flex;align-items:center;justify-content:center;width:32px;height:32px}
+  .del-btn:hover{color:#1A1916;background:#F0EFE9}
+  .add-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;padding:6px 12px;cursor:pointer;border:1px solid #D9D8D3;border-radius:20px;background:#fff;color:#888780}
+  .add-btn:hover{background:#F0EFE9;color:#1A1916}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;color:#888780}
+  .summary-row .val{font-weight:500;color:#1A1916}
+  .divider{border:none;border-top:1px solid #EDECE8;margin:8px 0}
+  .calc-btn{width:100%;padding:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;border-radius:12px;background:#1D9E75;color:#fff;letter-spacing:.01em}
+  .calc-btn:hover{background:#18896A}
+  .calc-btn:active{background:#138058}
+  .result-card{background:#F5F4F0;border-radius:10px;padding:10px 14px;margin-bottom:8px}
+  .result-top{display:flex;justify-content:space-between;align-items:center}
+  .result-name{font-size:14px;font-weight:600}
+  .result-amount{font-size:19px;font-weight:700;color:#1D9E75}
+  .result-items{margin-top:6px;border-top:1px solid #DEDDD8;padding-top:6px}
+  .result-item-line{display:flex;justify-content:space-between;font-size:12px;color:#888780;padding:2px 0}
+  .total-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #EDECE8;margin-top:4px}
+  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+  .chip{font-size:12px;padding:5px 11px;border-radius:20px;cursor:pointer;border:1.5px solid #C8C7C2;background:#F5F4F0;color:#888780;user-select:none;font-weight:400}
+  .chip:hover{border-color:#888780;color:#1A1916}
+  .chip.on{background:#E1F5EE;color:#085041;border-color:#1D9E75;font-weight:600}
+  .chip.all-btn{border-style:dashed}
+  .chip-hint{font-size:11px;color:#B4B2A9;margin-top:4px}
+  .inline-input{display:flex;align-items:center;gap:6px}
+  .inline-input input{flex:1}
+  .unit{font-size:13px;color:#888780;white-space:nowrap}
+</style>
+</head>
+<body>
+<h1>🍺 หารบิล</h1>
+
+<div class="card">
+  <p class="sec-title">รายชื่อและสัดส่วน</p>
+  <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 64px 32px;gap:6px;margin-bottom:4px">
+    <span class="col-header">ชื่อ</span>
+    <span class="col-header" style="text-align:right">สัดส่วน</span>
+    <span></span>
+  </div>
+  <div id="people-list"></div>
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+    <button class="add-btn" onclick="addPerson()"><i class="ti ti-plus"></i> เพิ่มคน</button>
+    <button class="add-btn" onclick="addPerson('',0.5)"><i class="ti ti-clock"></i> มาทีหลัง (0.5)</button>
+  </div>
+</div>
+
+<div class="card">
+  <p class="sec-title">รายการบิล</p>
+  <div style="display:grid;grid-template-columns:minmax(0,2fr) 56px minmax(0,1fr) 32px;gap:6px;margin-bottom:4px">
+    <span class="col-header">รายการ</span>
+    <span class="col-header" style="text-align:center">จำนวน</span>
+    <span class="col-header" style="text-align:right">ราคา (บาท)</span>
+    <span></span>
+  </div>
+  <div id="bill-list"></div>
+  <button class="add-btn" style="margin-top:10px" onclick="addItem()"><i class="ti ti-plus"></i> เพิ่มรายการ</button>
+
+  <hr class="divider" style="margin-top:14px">
+  <div class="summary-row"><span>รวมก่อนลด</span><span class="val" id="s-sub">0.00 บาท</span></div>
+  <div class="summary-row">
+    <span>ส่วนลด</span>
+    <div class="inline-input">
+      <input type="number" id="discount" value="0" min="0" style="width:80px" oninput="updateSummary()">
+      <span class="unit">บาท</span>
+    </div>
+  </div>
+  <div class="summary-row">
+    <span>Service charge</span>
+    <div class="inline-input">
+      <input type="number" id="service" value="0" min="0" max="100" style="width:60px" oninput="updateSummary()">
+      <span class="unit">%</span>
+    </div>
+  </div>
+  <hr class="divider">
+  <div class="summary-row" style="font-size:15px">
+    <span style="font-weight:600;color:#1A1916">ยอดรวมสุทธิ</span>
+    <span class="val" id="s-total" style="font-size:17px">0.00 บาท</span>
+  </div>
+</div>
+
+<button class="calc-btn" onclick="calculate()"><i class="ti ti-calculator"></i> คำนวณหารบิล</button>
+
+<div id="results" style="margin-top:14px;display:none">
+  <div class="card">
+    <p class="sec-title">ผลลัพธ์</p>
+    <div id="result-list"></div>
+    <div class="total-bar">
+      <span style="font-size:13px;color:#888780">รวมทั้งหมด</span>
+      <span style="font-size:16px;font-weight:700" id="total-display"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+let people=[],items=[],pCounter=0,iCounter=0;
+
+function addPerson(name='',ratio=1){
+  pCounter++;
+  people.push({id:'p'+pCounter,name,ratio});
+  items.forEach(it=>{if(!it.pids.includes('p'+pCounter))it.pids.push('p'+pCounter);});
+  renderPeople();renderItems();
+}
+function removePerson(id){
+  people=people.filter(p=>p.id!==id);
+  items.forEach(it=>{it.pids=it.pids.filter(x=>x!==id);});
+  renderPeople();renderItems();
+}
+function renderPeople(){
+  const el=document.getElementById('people-list');el.innerHTML='';
+  people.forEach((p,i)=>{
+    const row=document.createElement('div');row.className='item-row person-row-g';
+    row.innerHTML=`<input type="text" placeholder="ชื่อคนที่ ${i+1}" value="${p.name}" oninput="updatePName('${p.id}',this.value)">
+    <input type="number" min="0.1" step="0.1" value="${p.ratio}" style="text-align:right" oninput="updatePRatio('${p.id}',this.value)">
+    <button class="del-btn" onclick="removePerson('${p.id}')"><i class="ti ti-x"></i></button>`;
+    el.appendChild(row);
+  });
+}
+function updatePName(id,v){const p=people.find(x=>x.id===id);if(p){p.name=v;renderItems();}}
+function updatePRatio(id,v){const p=people.find(x=>x.id===id);if(p)p.ratio=parseFloat(v)||1;}
+function addItem(){
+  iCounter++;
+  items.push({id:'i'+iCounter,name:'',qty:1,price:0,pids:[...people.map(p=>p.id)]});
+  renderItems();updateSummary();
+}
+function removeItem(id){items=items.filter(x=>x.id!==id);renderItems();updateSummary();}
+function togglePid(iid,pid,btn){
+  const it=items.find(x=>x.id===iid);if(!it)return;
+  if(it.pids.includes(pid)){it.pids=it.pids.filter(x=>x!==pid);btn.classList.remove('on');}
+  else{it.pids.push(pid);btn.classList.add('on');}
+}
+function selectAll(iid){
+  const it=items.find(x=>x.id===iid);if(!it)return;
+  it.pids=[...people.map(p=>p.id)];
+  const area=document.querySelector(`[data-chips="${iid}"]`);
+  if(area)area.querySelectorAll('.chip[data-pid]').forEach(c=>c.classList.add('on'));
+}
+function renderItems(){
+  const el=document.getElementById('bill-list');el.innerHTML='';
+  items.forEach((it,i)=>{
+    const wrap=document.createElement('div');
+    wrap.style.cssText='margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #EDECE8';
+    const row=document.createElement('div');row.className='item-row bill-row';
+    row.innerHTML=`<input type="text" placeholder="รายการที่ ${i+1}" value="${it.name}" oninput="updateIName('${it.id}',this.value)">
+    <input type="number" min="1" step="1" value="${it.qty}" oninput="updateIQty('${it.id}',this.value)">
+    <input type="number" min="0" step="1" value="${it.price||''}" placeholder="0" oninput="updateIPrice('${it.id}',this.value)">
+    <button class="del-btn" onclick="removeItem('${it.id}')"><i class="ti ti-x"></i></button>`;
+    wrap.appendChild(row);
+    if(people.length>0){
+      const chipArea=document.createElement('div');chipArea.setAttribute('data-chips',it.id);
+      chipArea.innerHTML='<div class="chip-hint">หารกับ:</div>';
+      const chips=document.createElement('div');chips.className='chips';
+      people.forEach(p=>{
+        const isOn=it.pids.includes(p.id);
+        const c=document.createElement('button');
+        c.className='chip'+(isOn?' on':'');c.setAttribute('data-pid',p.id);
+        c.textContent=p.name||('คนที่ '+(people.indexOf(p)+1));
+        c.onclick=function(){togglePid(it.id,p.id,c);};chips.appendChild(c);
+      });
+      const allBtn=document.createElement('button');allBtn.className='chip all-btn';
+      allBtn.textContent='ทุกคน';allBtn.onclick=()=>selectAll(it.id);chips.appendChild(allBtn);
+      chipArea.appendChild(chips);wrap.appendChild(chipArea);
+    }
+    el.appendChild(wrap);
+  });
+  updateSummary();
+}
+function updateIName(id,v){const it=items.find(x=>x.id===id);if(it)it.name=v;}
+function updateIQty(id,v){const it=items.find(x=>x.id===id);if(it)it.qty=parseInt(v)||1;updateSummary();}
+function updateIPrice(id,v){const it=items.find(x=>x.id===id);if(it)it.price=parseFloat(v)||0;updateSummary();}
+function getSubtotal(){return items.reduce((s,it)=>s+(it.qty*(it.price||0)),0);}
+function updateSummary(){
+  const sub=getSubtotal();
+  const disc=parseFloat(document.getElementById('discount').value)||0;
+  const svc=parseFloat(document.getElementById('service').value)||0;
+  const after=Math.max(0,sub-disc);const total=after*(1+svc/100);
+  document.getElementById('s-sub').textContent=sub.toFixed(2)+' บาท';
+  document.getElementById('s-total').textContent=total.toFixed(2)+' บาท';
+}
+function calculate(){
+  if(people.length===0){alert('กรุณาเพิ่มรายชื่อก่อนคำนวณ');return;}
+  if(items.length===0){alert('กรุณาเพิ่มรายการก่อนคำนวณ');return;}
+  const disc=parseFloat(document.getElementById('discount').value)||0;
+  const svc=parseFloat(document.getElementById('service').value)||0;
+  const sub=getSubtotal();const after=Math.max(0,sub-disc);const svcMult=1+svc/100;
+  const totals={},breakdown={};
+  people.forEach(p=>{totals[p.id]=0;breakdown[p.id]=[];});
+  items.forEach(it=>{
+    const lineRaw=it.qty*(it.price||0);
+    const involvedPids=it.pids.filter(pid=>people.find(p=>p.id===pid));
+    if(involvedPids.length===0)return;
+    const totalRatio=involvedPids.reduce((s,pid)=>{const p=people.find(x=>x.id===pid);return s+(p?parseFloat(p.ratio)||1:1);},0);
+    const discFrac=sub>0?lineRaw/sub:0;
+    const lineFinal=(lineRaw-disc*discFrac)*svcMult;
+    involvedPids.forEach(pid=>{
+      const p=people.find(x=>x.id===pid);const ratio=p?parseFloat(p.ratio)||1:1;
+      const share=lineFinal*(ratio/totalRatio);
+      totals[pid]=(totals[pid]||0)+share;
+      breakdown[pid].push({name:it.name||'ไม่มีชื่อ',amount:share});
+    });
+  });
+  const grandTotal=Object.values(totals).reduce((s,v)=>s+v,0);
+  const resultList=document.getElementById('result-list');resultList.innerHTML='';
+  people.forEach(p=>{
+    const amt=totals[p.id]||0;
+    const pct=grandTotal>0?(amt/grandTotal*100).toFixed(0):0;
+    const name=p.name||('คนที่ '+(people.indexOf(p)+1));
+    const card=document.createElement('div');card.className='result-card';
+    let bkLines=(breakdown[p.id]||[]).map(b=>`<div class="result-item-line"><span>${b.name}</span><span>${b.amount.toFixed(2)} บาท</span></div>`).join('');
+    card.innerHTML=`<div class="result-top"><div><div class="result-name">${name}</div>
+    <div style="font-size:12px;color:#888780">สัดส่วน ${parseFloat(p.ratio)||1} · ${pct}% ของบิล</div></div>
+    <div class="result-amount">${amt.toFixed(2)} บาท</div></div>
+    ${bkLines?`<div class="result-items">${bkLines}</div>`:''}`;
+    resultList.appendChild(card);
+  });
+  document.getElementById('total-display').textContent=grandTotal.toFixed(2)+' บาท';
+  const res=document.getElementById('results');res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+addPerson('',1);addPerson('',1);addPerson('',1);addItem();
+</script>
+</body>
+</html>
