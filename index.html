@@ -1,138 +1,117 @@
-
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>หารบิล 🍺</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
 <style>
-.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
-.sec-title{font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.05em;text-transform:uppercase;margin:0 0 10px}
-.col-header{font-size:12px;color:var(--color-text-secondary);padding-bottom:4px}
-.item-row{display:grid;gap:6px;align-items:center;margin-bottom:6px}
-.bill-row{grid-template-columns:minmax(0,2fr) 56px minmax(0,1fr) 32px}
-.person-row-g{grid-template-columns:minmax(0,1.5fr) 64px 32px}
-input{width:100%;box-sizing:border-box}
-input[type=number]{text-align:right}
-.del-btn{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);padding:4px;border-radius:6px;font-size:16px;display:flex;align-items:center;justify-content:center;width:32px;height:32px}
-.del-btn:hover{color:var(--color-text-primary);background:var(--color-background-secondary)}
-.add-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;padding:5px 10px;cursor:pointer;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary)}
-.add-btn:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
-.summary-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;color:var(--color-text-secondary)}
-.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:8px 0}
-.calc-btn{width:100%;padding:10px;font-size:15px;font-weight:500;cursor:pointer;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);margin-bottom:8px}
-.calc-btn:hover{background:var(--color-background-tertiary)}
-.save-btn{width:100%;padding:10px;font-size:15px;font-weight:500;cursor:pointer;border:none;border-radius:var(--border-radius-md);background:#1D9E75;color:#fff}
-.save-btn:hover{background:#18896A}
-.save-btn:disabled{background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:default}
-.result-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;margin-bottom:8px}
-.result-top{display:flex;justify-content:space-between;align-items:center}
-.result-name{font-size:14px;font-weight:500}
-.result-amount{font-size:18px;font-weight:500;color:#1D9E75}
-.result-items{margin-top:6px;border-top:0.5px solid var(--color-border-tertiary);padding-top:6px}
-.result-item-line{display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-secondary);padding:2px 0}
-.total-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:0.5px solid var(--color-border-tertiary);margin-top:4px}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
-.chip{font-size:12px;padding:5px 11px;border-radius:20px;cursor:pointer;border:1.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);user-select:none}
-.chip:hover{border-color:var(--color-border-primary);color:var(--color-text-primary)}
-.chip.on{background:#E1F5EE;color:#085041;border-color:#1D9E75;font-weight:500}
-.chip.all-btn{border-style:dashed}
-.chip-hint{font-size:11px;color:var(--color-text-secondary);margin-top:4px}
-.tab-bar{display:flex;gap:4px;margin-bottom:1rem}
-.tab{flex:1;padding:8px;font-size:14px;cursor:pointer;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);text-align:center}
-.tab.active{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500;border-color:var(--color-border-primary)}
-.hist-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:12px 14px;margin-bottom:8px}
-.hist-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.hist-title{font-size:14px;font-weight:500}
-.hist-date{font-size:12px;color:var(--color-text-secondary)}
-.hist-total{font-size:16px;font-weight:500;color:#1D9E75}
-.hist-rows{border-top:0.5px solid var(--color-border-tertiary);padding-top:8px}
-.hist-row{display:flex;justify-content:space-between;font-size:13px;color:var(--color-text-secondary);padding:3px 0}
-.hist-row span:last-child{font-weight:500;color:var(--color-text-primary)}
-.hist-del{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:14px;padding:2px 6px;border-radius:4px}
-.hist-del:hover{color:var(--color-text-danger,#e24b4a);background:var(--color-background-danger,#fcebeb)}
-.empty-state{text-align:center;padding:2rem 1rem;color:var(--color-text-secondary);font-size:14px}
-.save-name-row{display:flex;gap:8px;margin-top:8px}
-.save-name-row input{flex:1}
-.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:#E1F5EE;color:#085041;font-weight:500;margin-left:6px}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F4F0;color:#1A1916;min-height:100vh;padding:16px}
+  h1{font-size:20px;font-weight:600;margin-bottom:16px;text-align:center}
+  .card{background:#fff;border:0.5px solid #D9D8D3;border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  .sec-title{font-size:11px;font-weight:600;color:#888780;letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px}
+  .col-header{font-size:12px;color:#888780;padding-bottom:4px}
+  .item-row{display:grid;gap:6px;align-items:center;margin-bottom:6px}
+  .bill-row{grid-template-columns:minmax(0,2fr) 56px minmax(0,1fr) 32px}
+  .person-row-g{grid-template-columns:minmax(0,1.5fr) 64px 32px}
+  input{width:100%;border:1px solid #D9D8D3;border-radius:8px;padding:7px 9px;font-size:14px;background:#FAFAF8;color:#1A1916;outline:none}
+  input:focus{border-color:#1D9E75;background:#fff}
+  input[type=number]{text-align:right}
+  .del-btn{background:none;border:none;cursor:pointer;color:#B4B2A9;padding:4px;border-radius:6px;font-size:16px;display:flex;align-items:center;justify-content:center;width:32px;height:32px}
+  .del-btn:hover{color:#1A1916;background:#F0EFE9}
+  .add-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;padding:6px 12px;cursor:pointer;border:1px solid #D9D8D3;border-radius:20px;background:#fff;color:#888780}
+  .add-btn:hover{background:#F0EFE9;color:#1A1916}
+  .summary-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;color:#888780}
+  .summary-row .val{font-weight:500;color:#1A1916}
+  .divider{border:none;border-top:1px solid #EDECE8;margin:8px 0}
+  .calc-btn{width:100%;padding:12px;font-size:15px;font-weight:600;cursor:pointer;border:none;border-radius:12px;background:#1D9E75;color:#fff;letter-spacing:.01em}
+  .calc-btn:hover{background:#18896A}
+  .calc-btn:active{background:#138058}
+  .result-card{background:#F5F4F0;border-radius:10px;padding:10px 14px;margin-bottom:8px}
+  .result-top{display:flex;justify-content:space-between;align-items:center}
+  .result-name{font-size:14px;font-weight:600}
+  .result-amount{font-size:19px;font-weight:700;color:#1D9E75}
+  .result-items{margin-top:6px;border-top:1px solid #DEDDD8;padding-top:6px}
+  .result-item-line{display:flex;justify-content:space-between;font-size:12px;color:#888780;padding:2px 0}
+  .total-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-top:1px solid #EDECE8;margin-top:4px}
+  .chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+  .chip{font-size:12px;padding:5px 11px;border-radius:20px;cursor:pointer;border:1.5px solid #C8C7C2;background:#F5F4F0;color:#888780;user-select:none;font-weight:400}
+  .chip:hover{border-color:#888780;color:#1A1916}
+  .chip.on{background:#E1F5EE;color:#085041;border-color:#1D9E75;font-weight:600}
+  .chip.all-btn{border-style:dashed}
+  .chip-hint{font-size:11px;color:#B4B2A9;margin-top:4px}
+  .inline-input{display:flex;align-items:center;gap:6px}
+  .inline-input input{flex:1}
+  .unit{font-size:13px;color:#888780;white-space:nowrap}
 </style>
-
-<div class="tab-bar">
-  <button class="tab active" onclick="switchTab('calc',this)"><i class="ti ti-calculator" aria-hidden="true"></i> คำนวณ</button>
-  <button class="tab" onclick="switchTab('history',this)"><i class="ti ti-clock" aria-hidden="true"></i> ประวัติ<span class="badge" id="hist-count">0</span></button>
-</div>
-
-<div id="tab-calc">
+</head>
+<body>
+<h1>🍺 หารบิล</h1>
 
 <div class="card">
   <p class="sec-title">รายชื่อและสัดส่วน</p>
   <div style="display:grid;grid-template-columns:minmax(0,1.5fr) 64px 32px;gap:6px;margin-bottom:4px">
-    <span class="col-header">ชื่อ</span><span class="col-header" style="text-align:right">สัดส่วน</span><span></span>
+    <span class="col-header">ชื่อ</span>
+    <span class="col-header" style="text-align:right">สัดส่วน</span>
+    <span></span>
   </div>
   <div id="people-list"></div>
-  <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-    <button class="add-btn" onclick="addPerson()"><i class="ti ti-plus" aria-hidden="true"></i> เพิ่มคน</button>
-    <button class="add-btn" onclick="addPerson('',0.5)"><i class="ti ti-clock" aria-hidden="true"></i> มาทีหลัง (0.5)</button>
+  <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+    <button class="add-btn" onclick="addPerson()"><i class="ti ti-plus"></i> เพิ่มคน</button>
+    <button class="add-btn" onclick="addPerson('',0.5)"><i class="ti ti-clock"></i> มาทีหลัง (0.5)</button>
   </div>
 </div>
 
 <div class="card">
   <p class="sec-title">รายการบิล</p>
   <div style="display:grid;grid-template-columns:minmax(0,2fr) 56px minmax(0,1fr) 32px;gap:6px;margin-bottom:4px">
-    <span class="col-header">รายการ</span><span class="col-header" style="text-align:center">จำนวน</span><span class="col-header" style="text-align:right">ราคา (บาท)</span><span></span>
+    <span class="col-header">รายการ</span>
+    <span class="col-header" style="text-align:center">จำนวน</span>
+    <span class="col-header" style="text-align:right">ราคา (บาท)</span>
+    <span></span>
   </div>
   <div id="bill-list"></div>
-  <button class="add-btn" style="margin-top:8px" onclick="addItem()"><i class="ti ti-plus" aria-hidden="true"></i> เพิ่มรายการ</button>
+  <button class="add-btn" style="margin-top:10px" onclick="addItem()"><i class="ti ti-plus"></i> เพิ่มรายการ</button>
+
   <hr class="divider" style="margin-top:14px">
-  <div class="summary-row"><span>รวมก่อนลด</span><span id="s-sub" style="font-weight:500;color:var(--color-text-primary)">0.00 บาท</span></div>
+  <div class="summary-row"><span>รวมก่อนลด</span><span class="val" id="s-sub">0.00 บาท</span></div>
   <div class="summary-row">
     <span>ส่วนลด</span>
-    <div style="display:flex;align-items:center;gap:4px">
-      <input type="number" id="discount" value="0" min="0" style="width:80px;text-align:right" oninput="updateSummary()">
-      <span style="font-size:13px;color:var(--color-text-secondary)">บาท</span>
+    <div class="inline-input">
+      <input type="number" id="discount" value="0" min="0" style="width:80px" oninput="updateSummary()">
+      <span class="unit">บาท</span>
     </div>
   </div>
   <div class="summary-row">
     <span>Service charge</span>
-    <div style="display:flex;align-items:center;gap:4px">
-      <input type="number" id="service" value="0" min="0" max="100" style="width:60px;text-align:right" oninput="updateSummary()">
-      <span style="font-size:13px;color:var(--color-text-secondary)">%</span>
+    <div class="inline-input">
+      <input type="number" id="service" value="0" min="0" max="100" style="width:60px" oninput="updateSummary()">
+      <span class="unit">%</span>
     </div>
   </div>
   <hr class="divider">
-  <div class="summary-row" style="font-size:15px"><span style="font-weight:500;color:var(--color-text-primary)">ยอดรวมสุทธิ</span><span id="s-total" style="font-size:16px;font-weight:500;color:var(--color-text-primary)">0.00 บาท</span></div>
+  <div class="summary-row" style="font-size:15px">
+    <span style="font-weight:600;color:#1A1916">ยอดรวมสุทธิ</span>
+    <span class="val" id="s-total" style="font-size:17px">0.00 บาท</span>
+  </div>
 </div>
 
-<button class="calc-btn" onclick="calculate()"><i class="ti ti-calculator" aria-hidden="true"></i> คำนวณหารบิล</button>
+<button class="calc-btn" onclick="calculate()"><i class="ti ti-calculator"></i> คำนวณหารบิล</button>
 
-<div id="results" style="display:none">
+<div id="results" style="margin-top:14px;display:none">
   <div class="card">
     <p class="sec-title">ผลลัพธ์</p>
     <div id="result-list"></div>
     <div class="total-bar">
-      <span style="font-size:13px;color:var(--color-text-secondary)">รวมทั้งหมด</span>
-      <span style="font-size:16px;font-weight:500" id="total-display"></span>
+      <span style="font-size:13px;color:#888780">รวมทั้งหมด</span>
+      <span style="font-size:16px;font-weight:700" id="total-display"></span>
     </div>
   </div>
-  <div class="card">
-    <p class="sec-title">บันทึกมื้อนี้</p>
-    <div class="save-name-row">
-      <input type="text" id="save-name" placeholder="ชื่อมื้อ เช่น ข้าวเย็นวันเกิดโอ๊ต">
-      <button class="save-btn" onclick="saveBill()" style="width:auto;padding:8px 16px;font-size:14px"><i class="ti ti-device-floppy" aria-hidden="true"></i> บันทึก</button>
-    </div>
-  </div>
-</div>
-
-</div>
-
-<div id="tab-history" style="display:none">
-  <div id="history-list"></div>
 </div>
 
 <script>
-let people=[],items=[],pCounter=0,iCounter=0,lastResult=null;
-
-function switchTab(tab,btn){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-calc').style.display=tab==='calc'?'block':'none';
-  document.getElementById('tab-history').style.display=tab==='history'?'block':'none';
-  if(tab==='history') renderHistory();
-}
+let people=[],items=[],pCounter=0,iCounter=0;
 
 function addPerson(name='',ratio=1){
   pCounter++;
@@ -151,7 +130,7 @@ function renderPeople(){
     const row=document.createElement('div');row.className='item-row person-row-g';
     row.innerHTML=`<input type="text" placeholder="ชื่อคนที่ ${i+1}" value="${p.name}" oninput="updatePName('${p.id}',this.value)">
     <input type="number" min="0.1" step="0.1" value="${p.ratio}" style="text-align:right" oninput="updatePRatio('${p.id}',this.value)">
-    <button class="del-btn" onclick="removePerson('${p.id}')" aria-label="ลบ"><i class="ti ti-x" aria-hidden="true"></i></button>`;
+    <button class="del-btn" onclick="removePerson('${p.id}')"><i class="ti ti-x"></i></button>`;
     el.appendChild(row);
   });
 }
@@ -178,12 +157,12 @@ function renderItems(){
   const el=document.getElementById('bill-list');el.innerHTML='';
   items.forEach((it,i)=>{
     const wrap=document.createElement('div');
-    wrap.style.cssText='margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid var(--color-border-tertiary)';
+    wrap.style.cssText='margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid #EDECE8';
     const row=document.createElement('div');row.className='item-row bill-row';
     row.innerHTML=`<input type="text" placeholder="รายการที่ ${i+1}" value="${it.name}" oninput="updateIName('${it.id}',this.value)">
     <input type="number" min="1" step="1" value="${it.qty}" oninput="updateIQty('${it.id}',this.value)">
     <input type="number" min="0" step="1" value="${it.price||''}" placeholder="0" oninput="updateIPrice('${it.id}',this.value)">
-    <button class="del-btn" onclick="removeItem('${it.id}')" aria-label="ลบ"><i class="ti ti-x" aria-hidden="true"></i></button>`;
+    <button class="del-btn" onclick="removeItem('${it.id}')"><i class="ti ti-x"></i></button>`;
     wrap.appendChild(row);
     if(people.length>0){
       const chipArea=document.createElement('div');chipArea.setAttribute('data-chips',it.id);
@@ -191,8 +170,8 @@ function renderItems(){
       const chips=document.createElement('div');chips.className='chips';
       people.forEach(p=>{
         const isOn=it.pids.includes(p.id);
-        const c=document.createElement('button');c.className='chip'+(isOn?' on':'');
-        c.setAttribute('data-pid',p.id);
+        const c=document.createElement('button');
+        c.className='chip'+(isOn?' on':'');c.setAttribute('data-pid',p.id);
         c.textContent=p.name||('คนที่ '+(people.indexOf(p)+1));
         c.onclick=function(){togglePid(it.id,p.id,c);};chips.appendChild(c);
       });
@@ -239,7 +218,6 @@ function calculate(){
     });
   });
   const grandTotal=Object.values(totals).reduce((s,v)=>s+v,0);
-  lastResult={people:people.map(p=>({...p})),totals,breakdown,grandTotal,disc,svc,items:items.map(i=>({...i}))};
   const resultList=document.getElementById('result-list');resultList.innerHTML='';
   people.forEach(p=>{
     const amt=totals[p.id]||0;
@@ -248,69 +226,16 @@ function calculate(){
     const card=document.createElement('div');card.className='result-card';
     let bkLines=(breakdown[p.id]||[]).map(b=>`<div class="result-item-line"><span>${b.name}</span><span>${b.amount.toFixed(2)} บาท</span></div>`).join('');
     card.innerHTML=`<div class="result-top"><div><div class="result-name">${name}</div>
-    <div style="font-size:12px;color:var(--color-text-secondary)">สัดส่วน ${parseFloat(p.ratio)||1} · ${pct}%</div></div>
+    <div style="font-size:12px;color:#888780">สัดส่วน ${parseFloat(p.ratio)||1} · ${pct}% ของบิล</div></div>
     <div class="result-amount">${amt.toFixed(2)} บาท</div></div>
     ${bkLines?`<div class="result-items">${bkLines}</div>`:''}`;
     resultList.appendChild(card);
   });
   document.getElementById('total-display').textContent=grandTotal.toFixed(2)+' บาท';
-  document.getElementById('results').style.display='block';
-  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'nearest'});
+  const res=document.getElementById('results');res.style.display='block';
+  res.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-
-function saveBill(){
-  if(!lastResult){alert('กรุณาคำนวณก่อนบันทึก');return;}
-  const name=document.getElementById('save-name').value.trim()||'มื้อที่ '+(getHistory().length+1);
-  const record={id:Date.now(),name,date:new Date().toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),grandTotal:lastResult.grandTotal,people:lastResult.people,totals:lastResult.totals};
-  const hist=getHistory();hist.unshift(record);
-  localStorage.setItem('billHistory',JSON.stringify(hist));
-  updateHistCount();
-  document.getElementById('save-name').value='';
-  alert('บันทึกแล้วครับ! ดูได้ในแท็บ "ประวัติ"');
-}
-
-function getHistory(){
-  try{return JSON.parse(localStorage.getItem('billHistory'))||[];}
-  catch{return [];}
-}
-
-function deleteHistory(id){
-  const hist=getHistory().filter(h=>h.id!==id);
-  localStorage.setItem('billHistory',JSON.stringify(hist));
-  updateHistCount();renderHistory();
-}
-
-function updateHistCount(){
-  const n=getHistory().length;
-  document.getElementById('hist-count').textContent=n;
-}
-
-function renderHistory(){
-  const hist=getHistory();
-  const el=document.getElementById('history-list');el.innerHTML='';
-  if(hist.length===0){
-    el.innerHTML='<div class="empty-state"><i class="ti ti-clock" style="font-size:32px;display:block;margin-bottom:8px" aria-hidden="true"></i>ยังไม่มีประวัติครับ<br>คำนวณแล้วกดบันทึกได้เลย</div>';
-    return;
-  }
-  hist.forEach(h=>{
-    const card=document.createElement('div');card.className='hist-card';
-    let rows=h.people.map(p=>{
-      const amt=h.totals[p.id]||0;
-      const name=p.name||'ไม่ระบุชื่อ';
-      return `<div class="hist-row"><span>${name}</span><span>${amt.toFixed(2)} บาท</span></div>`;
-    }).join('');
-    card.innerHTML=`<div class="hist-header">
-      <div><div class="hist-title">${h.name}</div><div class="hist-date">${h.date}</div></div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="hist-total">${h.grandTotal.toFixed(2)} บาท</div>
-        <button class="hist-del" onclick="deleteHistory(${h.id})" aria-label="ลบ"><i class="ti ti-trash" aria-hidden="true"></i></button>
-      </div>
-    </div>
-    <div class="hist-rows">${rows}</div>`;
-    el.appendChild(card);
-  });
-}
-
 addPerson('',1);addPerson('',1);addPerson('',1);addItem();
-updateHistCount();
 </script>
+</body>
+</html>
