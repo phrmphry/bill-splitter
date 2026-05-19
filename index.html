@@ -69,15 +69,11 @@ input[type=number]{-moz-appearance:textfield}
 .chip-area{margin-top:8px}
 .chip-hint{font-size:11px;color:#B4B2A9;margin-bottom:5px}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{font-size:12px;padding:5px 11px;border-radius:20px;cursor:pointer;border:1.5px solid #D9D8D3;background:#F9F8F5;color:#888780;font-family:'Sarabun',sans-serif;user-select:none;transition:all .12s;-webkit-tap-highlight-color:transparent;display:flex;align-items:center;gap:4px}
+.chip{font-size:12px;padding:5px 10px;border-radius:20px;cursor:pointer;border:1.5px solid #D9D8D3;background:#F9F8F5;color:#888780;font-family:'Sarabun',sans-serif;user-select:none;transition:all .12s;-webkit-tap-highlight-color:transparent;display:inline-flex;align-items:center;gap:4px}
+.chip-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;display:inline-block}
 .chip:active{opacity:.8}
 .chip.on{background:#E1F5EE;color:#085041;border-color:#1D9E75;font-weight:600}
 .chip.all{border-style:dashed}
-
-/* ratio input inside chip row */
-.chip-ratio{width:44px;border:1px solid #D9D8D3;border-radius:6px;padding:3px 5px;font-size:12px;font-family:'Sarabun',sans-serif;background:#fff;color:#1A1916;text-align:center;-webkit-appearance:none;-moz-appearance:textfield}
-.chip-ratio::-webkit-inner-spin-button,.chip-ratio::-webkit-outer-spin-button{-webkit-appearance:none}
-.chip.on .chip-ratio{border-color:#1D9E75;background:#f0fbf7}
 
 .result-person{background:#F9F8F5;border-radius:10px;padding:12px 13px;margin-bottom:8px;border-left:3px solid #1D9E75}
 .result-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;gap:8px}
@@ -336,26 +332,12 @@ function renderItems(){
         c.setAttribute('data-pid',p.id);
 
         const nameSpan=document.createElement('span');
+        nameSpan.className='chip-name';
         nameSpan.textContent=p.name||('คนที่ '+(people.indexOf(p)+1));
         nameSpan.style.cursor='pointer';
         nameSpan.onclick=()=>toggleMember(it.id,p.id);
 
-        // ratio input — only show when on
-        if(m.on){
-          const ratioInput=document.createElement('input');
-          ratioInput.type='number';ratioInput.className='chip-ratio';
-          ratioInput.min='0';ratioInput.step='0.5';ratioInput.inputMode='decimal';
-          ratioInput.value=m.ratio!==null?m.ratio:'';
-          ratioInput.placeholder='1';
-          ratioInput.title='สัดส่วน (0 / 0.5 / 1)';
-          ratioInput.onclick=e=>e.stopPropagation();
-          ratioInput.onchange=function(){setRatio(it.id,p.id,this.value,this);};
-          ratioInput.onblur=function(){setRatio(it.id,p.id,this.value,this);};
-          c.appendChild(nameSpan);
-          c.appendChild(ratioInput);
-        } else {
-          c.appendChild(nameSpan);
-        }
+        c.appendChild(nameSpan);
         chips.appendChild(c);
       });
 
@@ -366,7 +348,36 @@ function renderItems(){
       clr.style.borderColor='#E0DED8';clr.style.color='#888780';
       clr.textContent='เคลียร์';clr.onclick=()=>clearAll(it.id);chips.appendChild(clr);
 
-      ca.appendChild(chips);wrap.appendChild(ca);
+      ca.appendChild(chips);
+
+      // ratio rows — แสดงเฉพาะคนที่ถูกเลือก แยกออกมาเป็นแถวด้านล่าง
+      const activePeople=people.filter(p=>it.members[p.id]&&it.members[p.id].on);
+      if(activePeople.length>0){
+        const ratioTable=document.createElement('div');
+        ratioTable.style.cssText='margin-top:8px;display:flex;flex-direction:column;gap:4px';
+        activePeople.forEach(p=>{
+          const m=it.members[p.id];
+          const row=document.createElement('div');
+          row.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:8px';
+          const lbl=document.createElement('span');
+          lbl.style.cssText='font-size:12px;color:#085041;font-weight:500;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
+          lbl.textContent=(p.name||('คนที่ '+(people.indexOf(p)+1)))+' :';
+          const inp=document.createElement('input');
+          inp.type='number';inp.min='0';inp.step='0.5';inp.inputMode='decimal';
+          inp.style.cssText='width:54px;flex-shrink:0;border:1px solid #1D9E75;border-radius:6px;padding:4px 6px;font-size:13px;font-family:\'Sarabun\',sans-serif;background:#f0fbf7;color:#085041;text-align:center;-webkit-appearance:none;-moz-appearance:textfield';
+          inp.value=m.ratio!==null?m.ratio:'';
+          inp.placeholder='1';
+          inp.title='สัดส่วนใส่ 0.5 หรือ 1 เท่านั้น';
+          inp.onclick=e=>e.stopPropagation();
+          inp.onchange=function(){setRatio(it.id,p.id,this.value,this);};
+          inp.onblur=function(){setRatio(it.id,p.id,this.value,this);};
+          row.appendChild(lbl);row.appendChild(inp);
+          ratioTable.appendChild(row);
+        });
+        ca.appendChild(ratioTable);
+      }
+
+      wrap.appendChild(ca);
     }
     el.appendChild(wrap);
   });
@@ -420,14 +431,21 @@ function calculate(){
   if(!people.length){showPopup('กรุณาเพิ่มรายชื่อก่อนคำนวณครับ');return;}
   if(!items.length){showPopup('กรุณาเพิ่มรายการก่อนคำนวณครับ');return;}
 
-  // check missing price
+  // 1. check missing price
   const missing=items.filter(it=>it.price===null||it.price===undefined||it.price==='');
   if(missing.length){
     const names=missing.map(it=>it.name||('รายการที่ '+(items.indexOf(it)+1))).join(', ');
     showPopup(`ยังไม่ได้กรอกราคาที่: ${names}`,'❗ ลืมกรอกราคา');return;
   }
 
-  // check items with no one selected or no valid ratio
+  // 2. check discount > subtotal
+  const sub=getSubtotal();
+  const disc=parseFloat(document.getElementById('discount').value)||0;
+  if(disc>sub){
+    showPopup(`ส่วนลด (${disc.toFixed(2)} บาท) มากกว่ายอดรวมอาหาร (${sub.toFixed(2)} บาท)\nกรุณาแก้ไขให้ถูกต้องครับ`,'❗ ส่วนลดผิดปกติ');return;
+  }
+
+  // 3. check items with no one selected or no valid ratio
   const noMember=items.filter(it=>{
     const active=people.filter(p=>it.members[p.id]&&it.members[p.id].on);
     if(!active.length) return true;
@@ -439,10 +457,8 @@ function calculate(){
     showPopup(`รายการต่อไปนี้ยังไม่ได้เลือกคนหารหรือยังไม่กำหนดสัดส่วน:\n${names}`,'❗ ยังไม่ครบ');return;
   }
 
-  const disc=parseFloat(document.getElementById('discount').value)||0;
   const svc=parseFloat(document.getElementById('service').value)||0;
   const vat=parseFloat(document.getElementById('vat').value)||0;
-  const sub=getSubtotal();
   const afterDisc=Math.max(0,sub-disc);
   const grandTotal=afterDisc+svc+vat;
   const multiplier=sub>0?grandTotal/sub:0;
