@@ -92,7 +92,11 @@ input[type=number]{-moz-appearance:textfield}
 .btn-copy:active{background:#E1F5EE}
 .btn-copy.copied{background:#1D9E75;color:#fff}
 
-.ratio-hint{font-size:11px;color:#B4B2A9;margin-top:4px;line-height:1.7}
+.pay-tab{flex:1;padding:8px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #D9D8D3;border-radius:20px;background:transparent;color:#888780;font-family:'Sarabun',sans-serif;transition:all .15s}
+.pay-tab.active{background:#1A1916;color:#F2F0EB;border-color:#1A1916}
+.pay-label{display:block;font-size:12px;color:#888780;margin-bottom:4px}
+.pay-later-row{display:flex;align-items:center;gap:8px;font-size:14px;color:#57534E;cursor:pointer}
+.pay-later-row input[type=checkbox]{width:18px;height:18px;cursor:pointer;accent-color:#1D9E75}
 
 /* custom popup */
 .popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
@@ -169,6 +173,55 @@ input[type=number]{-moz-appearance:textfield}
     <div class="row-total">
       <span class="label">ยอดรวมสุทธิ</span>
       <span class="amount" id="s-total">0.00 บาท</span>
+    </div>
+  </div>
+
+  <!-- บัญชีธนาคาร -->
+  <div class="card">
+    <p class="card-title">บัญชีธนาคารชำระบิลตี้</p>
+
+    <label class="pay-later-row">
+      <input type="checkbox" id="pay-later" onchange="togglePayLater(this.checked)">
+      <span>เดี๋ยวแจ้งภายหลังจ้า</span>
+    </label>
+
+    <div id="pay-section" style="margin-top:12px">
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <button class="pay-tab active" id="tab-bank" onclick="switchPayTab('bank')">🏦 บัญชีธนาคาร</button>
+        <button class="pay-tab" id="tab-promptpay" onclick="switchPayTab('promptpay')">📱 พร้อมเพย์</button>
+      </div>
+
+      <div id="pay-bank">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div>
+            <label class="pay-label">ธนาคาร</label>
+            <input type="text" id="bank-name" placeholder="เช่น กสิกรไทย, SCB, กรุงไทย">
+          </div>
+          <div>
+            <label class="pay-label">เลขที่บัญชี</label>
+            <input type="text" id="bank-number" placeholder="ตัวเลขไม่เกิน 15 หลัก" inputmode="numeric" maxlength="15"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,15)">
+          </div>
+          <div>
+            <label class="pay-label">ชื่อบัญชี</label>
+            <input type="text" id="bank-owner" placeholder="ชื่อ-นามสกุลเจ้าของบัญชี">
+          </div>
+        </div>
+      </div>
+
+      <div id="pay-promptpay" style="display:none">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div>
+            <label class="pay-label">พร้อมเพย์ (เบอร์มือถือ/เลขบัตรปชช.)</label>
+            <input type="text" id="pp-number" placeholder="10-13 หลัก" inputmode="numeric" maxlength="13"
+              oninput="this.value=this.value.replace(/\D/g,'').slice(0,13)">
+          </div>
+          <div>
+            <label class="pay-label">ชื่อบัญชี</label>
+            <input type="text" id="pp-owner" placeholder="ชื่อ-นามสกุลเจ้าของบัญชี">
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -457,6 +510,9 @@ function calculate(){
     showPopup(`รายการต่อไปนี้ยังไม่ได้เลือกคนหารหรือยังไม่กำหนดสัดส่วน:\n${names}`,'❗ ยังไม่ครบ');return;
   }
 
+  // 4. check payment info
+  if(!validatePayInfo()) return;
+
   const svc=parseFloat(document.getElementById('service').value)||0;
   const vat=parseFloat(document.getElementById('vat').value)||0;
   const afterDisc=Math.max(0,sub-disc);
@@ -512,6 +568,58 @@ function calculate(){
   setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
 
+/* ---- PAY TAB ---- */
+let payMode='bank';
+function switchPayTab(mode){
+  payMode=mode;
+  document.getElementById('pay-bank').style.display=mode==='bank'?'block':'none';
+  document.getElementById('pay-promptpay').style.display=mode==='promptpay'?'block':'none';
+  document.getElementById('tab-bank').classList.toggle('active',mode==='bank');
+  document.getElementById('tab-promptpay').classList.toggle('active',mode==='promptpay');
+}
+
+function togglePayLater(checked){
+  document.getElementById('pay-section').style.display=checked?'none':'block';
+}
+
+function validatePayInfo(){
+  if(document.getElementById('pay-later').checked) return true;
+  if(payMode==='bank'){
+    const bank=document.getElementById('bank-name').value.trim();
+    const num=document.getElementById('bank-number').value.trim();
+    const owner=document.getElementById('bank-owner').value.trim();
+    const missing=[];
+    if(!bank) missing.push('ธนาคาร');
+    if(!num) missing.push('เลขที่บัญชี');
+    if(!owner) missing.push('ชื่อบัญชี');
+    if(missing.length){showPopup(`กรุณากรอกข้อมูลบัญชีธนาคารให้ครบ:\n${missing.join(', ')}`,'❗ ข้อมูลไม่ครบ');return false;}
+  } else {
+    const num=document.getElementById('pp-number').value.trim();
+    const owner=document.getElementById('pp-owner').value.trim();
+    const missing=[];
+    if(!num) missing.push('เลขพร้อมเพย์');
+    else if(num.length<10||num.length>13){showPopup('เลขพร้อมเพย์ต้องมี 10-13 หลักครับ','❗ ข้อมูลไม่ถูกต้อง');return false;}
+    if(!owner) missing.push('ชื่อบัญชี');
+    if(missing.length){showPopup(`กรุณากรอกข้อมูลพร้อมเพย์ให้ครบ:\n${missing.join(', ')}`,'❗ ข้อมูลไม่ครบ');return false;}
+  }
+  return true;
+}
+
+function getPayInfo(){
+  if(payMode==='bank'){
+    const bank=document.getElementById('bank-name').value.trim();
+    const num=document.getElementById('bank-number').value.trim();
+    const owner=document.getElementById('bank-owner').value.trim();
+    if(!bank&&!num&&!owner) return null;
+    return `🏦 ธนาคาร: ${bank||'-'}\n💳 เลขบัญชี: ${num||'-'}\n👤 ชื่อบัญชี: ${owner||'-'}`;
+  } else {
+    const num=document.getElementById('pp-number').value.trim();
+    const owner=document.getElementById('pp-owner').value.trim();
+    if(!num&&!owner) return null;
+    return `📱 พร้อมเพย์: ${num||'-'}\n👤 ชื่อบัญชี: ${owner||'-'}`;
+  }
+}
+
 /* ---- COPY ---- */
 function copyResult(){
   if(!lastResult)return;
@@ -522,6 +630,8 @@ function copyResult(){
     text+=`👤 ${p.name||'ไม่ระบุชื่อ'}: ${amt.toFixed(2)} บาท\n`;
   });
   text+=`─────────────────\n💰 รวม: ${lastResult.grandTotal.toFixed(2)} บาท`;
+  const pay=getPayInfo();
+  if(pay) text+=`\n─────────────────\n${pay}`;
   navigator.clipboard.writeText(text).then(()=>{
     btn.classList.add('copied');
     btn.innerHTML='<i class="ti ti-check" aria-hidden="true"></i> คัดลอกแล้ว!';
